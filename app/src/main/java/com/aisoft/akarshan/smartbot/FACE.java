@@ -173,9 +173,9 @@ public class FACE extends AppCompatActivity {
 
                     ts.speak(stripHtml(r), TextToSpeech.QUEUE_FLUSH, null);
                     if (!(pullLinks(stripHtml(r)).equals(""))) {
-                        op.getSettings().setDomStorageEnabled(true);
-                        op.getSettings().setUseWideViewPort(true);
-                        op.getSettings().setAppCacheEnabled(true);
+                       // op.getSettings().setDomStorageEnabled(true);   {Not needed now
+                       // op.getSettings().setUseWideViewPort(true);
+                       // op.getSettings().setAppCacheEnabled(true);
                         op.setWebViewClient(new WebViewClient());
                         op.setWebChromeClient(new WebChromeClient() {
                         });
