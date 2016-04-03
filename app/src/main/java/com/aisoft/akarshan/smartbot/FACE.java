@@ -1,14 +1,15 @@
 package com.aisoft.akarshan.smartbot;
 
+import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
+
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -18,7 +19,6 @@ import android.view.MenuItem;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static android.os.StrictMode.*;
 
 public class FACE extends AppCompatActivity {
     TextView ip;
@@ -47,6 +49,9 @@ public class FACE extends AppCompatActivity {
         setContentView(R.layout.activity_face);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ThreadPolicy policy = new ThreadPolicy.Builder().permitAll().build();
+        setThreadPolicy(policy);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -105,12 +110,11 @@ public class FACE extends AppCompatActivity {
                 return;
             }
         }
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
 
         //path = baseDir;
         bot = new Bot(botname, baseDir);
         chatSession = new Chat(bot);
+
 
     }
 
@@ -129,19 +133,19 @@ public class FACE extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.about) {
+            Toast t = Toast.makeText(getApplicationContext(),
+                    "Application developed by Akarshan Biswas. For upcoming features go to http://www.facebook.com/attract.akarshan. Please support this project on git.",
+                    Toast.LENGTH_LONG);
+            t.show();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-    public void talk(View v){
 
 
-
-
-    }
-
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -167,12 +171,9 @@ public class FACE extends AppCompatActivity {
 
 
                     op.loadData(r, "text/html", "UTF-8");
-
-                    ts.speak(stripHtml(r), TextToSpeech.QUEUE_FLUSH, null);
+                    ts.speak(stripHtml(r), TextToSpeech.QUEUE_FLUSH, null, null);
                     if (!(pullLinks(stripHtml(r)).equals(""))) {
-                       // op.getSettings().setDomStorageEnabled(true);   {Not needed now
-                       // op.getSettings().setUseWideViewPort(true);
-                       // op.getSettings().setAppCacheEnabled(true);
+
                         op.setWebViewClient(new WebViewClient());
                         op.setWebChromeClient(new WebChromeClient() {
                         });
