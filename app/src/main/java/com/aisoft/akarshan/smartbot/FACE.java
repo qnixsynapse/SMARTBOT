@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,7 +28,6 @@ import org.alicebot.ab.Chat;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +36,7 @@ import static android.os.StrictMode.*;
 public class FACE extends AppCompatActivity {
     TextView ip;
     WebView op;
-    String botname = "super";
+    String botname = "ultron";
     Chat chatSession;
     Bot bot;
     String baseDir;
@@ -51,6 +51,8 @@ public class FACE extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ThreadPolicy policy = new ThreadPolicy.Builder().permitAll().build();
         setThreadPolicy(policy);
+       final String googleTtsPackage = "com.google.android.tts";
+
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -80,12 +82,19 @@ public class FACE extends AppCompatActivity {
 
         ip = (TextView) findViewById(R.id.inputtext);
         op = (WebView) findViewById(R.id.responce);
+
+
         ts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if(status != TextToSpeech.ERROR) {
-                    ts.setLanguage(Locale.UK);
-                }
+
+                    if(status != TextToSpeech.ERROR) {
+
+                         ts.setEngineByPackageName(googleTtsPackage);
+                    }
+                else
+                         Toast.makeText(getApplicationContext(),"Please install Google text to speech available in different languages from Google play store or else i cannot talk",Toast.LENGTH_LONG).show();
+
             }
         });
         String state = Environment.getExternalStorageState();
@@ -105,6 +114,7 @@ public class FACE extends AppCompatActivity {
             ZipFileExtraction extract = new ZipFileExtraction();
             try {
                 extract.unZipIt(getAssets().open("bots.zip"),baseDir + "/");
+                Log.i("InitSMARTBOT", "Extracted bots folder");
             } catch (Exception e) {
                 e.printStackTrace();
                 return;
@@ -170,7 +180,8 @@ public class FACE extends AppCompatActivity {
                     op.getSettings().setJavaScriptEnabled(true);
 
 
-                    op.loadData(r, "text/html", "UTF-8");
+
+                    op.loadDataWithBaseURL(null, r, "text/html", "utf-8", null);
                     ts.speak(stripHtml(r), TextToSpeech.QUEUE_FLUSH, null, null);
                     if (!(pullLinks(stripHtml(r)).equals(""))) {
 
@@ -178,12 +189,24 @@ public class FACE extends AppCompatActivity {
                         op.setWebChromeClient(new WebChromeClient() {
                         });
                         op.loadUrl(pullLinks(r));
+                        ip.setText("");
                     }
                 }
                 break;
             }
-
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ts.shutdown();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ts.stop();
     }
 
     public String stripHtml(String html) {
