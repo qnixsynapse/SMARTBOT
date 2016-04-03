@@ -29,6 +29,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:hint="User Input:" />
+        android:hint="To ask the bot just hit the microphone button:" />
 
 </RelativeLayout>
