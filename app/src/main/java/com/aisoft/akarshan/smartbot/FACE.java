@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 public class FACE extends AppCompatActivity {
     TextView ip;
     WebView op;
-    ImageButton talk;
     String botname = "super";
     Chat chatSession;
     Bot bot;
@@ -53,14 +52,29 @@ public class FACE extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(
+                        RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
+
+                try {
+                    startActivityForResult(intent, RESULT_SPEECH);
+                    op.loadData("","","");
+                } catch (ActivityNotFoundException a) {
+                    Toast t = Toast.makeText(getApplicationContext(),
+                            "Opps! Your device doesn't support Speech to Text",
+                            Toast.LENGTH_SHORT);
+                    t.show();
+                }
+
+
+                ip.setText("");
+
             }
         });
 
         ip = (TextView) findViewById(R.id.inputtext);
         op = (WebView) findViewById(R.id.responce);
-        talk = (ImageButton) findViewById(R.id.talkButton);
         ts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -124,23 +138,6 @@ public class FACE extends AppCompatActivity {
     public void talk(View v){
 
 
-        Intent intent = new Intent(
-                RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "en-US");
-
-        try {
-            startActivityForResult(intent, RESULT_SPEECH);
-            op.loadData("","","");
-        } catch (ActivityNotFoundException a) {
-            Toast t = Toast.makeText(getApplicationContext(),
-                    "Opps! Your device doesn't support Speech to Text",
-                    Toast.LENGTH_SHORT);
-            t.show();
-        }
-
-
-        ip.setText("");
 
 
     }
