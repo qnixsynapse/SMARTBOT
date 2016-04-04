@@ -169,17 +169,12 @@ public class FACE extends AppCompatActivity {
 
                     ip.setText(text.get(0));
                     String i = ip.getText().toString();
-                   /* if(checkexit(i)){
-                        //need to close this activity    //To DO
-                       // this.finish();
-                        ((Activity)getApplicationContext()).finish();
-                    } */
 
                     String r = chatSession.multisentenceRespond(i);
 
                     op.getSettings().setJavaScriptEnabled(true);
 
-
+                    //Todo : find substring in ip in a string r
 
                     op.loadDataWithBaseURL(null, r, "text/html", "utf-8", null);
                     ts.speak(stripHtml(r), TextToSpeech.QUEUE_FLUSH, null, null);
